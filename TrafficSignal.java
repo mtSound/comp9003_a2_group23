@@ -1,4 +1,5 @@
 public class TrafficSignal {
+    
     protected static final String[] states = new String[]{"red", "yellow", "green"};
     
     private String signalId;
@@ -18,7 +19,11 @@ public class TrafficSignal {
         return currentState;
     }
 
-    public void signal() {
+    public void setTimer(int newTime[]) {
+        // change the timers
+    }
+
+    public void signal(int time) {
         // cycle through states
     }
 

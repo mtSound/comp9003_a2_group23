@@ -14,6 +14,7 @@ public class IntersectionNetwork {
                 if (i % 2 == 1) {
                     lane.add(0);
                 } else { // if it's the outer lanes, populate with alternately with ones (intersections)
+                    // ternary operator (single line if/else)
                     lane.add(j % 2 == 0 ? 1 : 0);
                 }
             }

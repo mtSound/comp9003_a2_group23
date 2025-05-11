@@ -45,34 +45,44 @@ public class Main {
                     System.out.println("What kind of vehicle would you like to add? ('Car', 'Bus' or 'Truck')");
                     int vehicleID = Vehicle.count + 1;
 
+                    // loop until valid input or 'cancel' are entered
                     while (!validInput){
-                        // prompt for user input
-                        String vehicleType = scanner.nextLine();
+                        // prompt for user input (type of vehicle)
+                        String vehicleType = scanner.nextLine().toLowerCase();
                         
                         switch(vehicleType) {
-                            case "Car":
+                            
+                            // add a car
+                            case "car":
                                 
                                 vehicles.add(new Car(vehicleID));
                                 
                                 validInput = true;
                                 break;
                                 
-                            case "Bus":
+                            // add a bus
+                            case "bus":
                                 
                                 vehicles.add(new Bus(vehicleID));
                                 
                                 validInput = true;
                                 break;
                                 
-                            case "Truck":
+                            // add a truck
+                            case "truck":
                                 
                                 vehicles.add(new Truck(vehicleID));
                             
                                 validInput = true;
                                 break;
 
-                            case "Cancel":
+                            // return to main menu if user enters "cancel"
                             case "cancel":
+                                System.out.print("Returning to main menu\n");
+                                
+                                // section lines for breaking up user interface
+                                System.out.println(sectionLine + "\n");
+                                
                                 break menuSelection;
 
                             default:
@@ -83,7 +93,7 @@ public class Main {
                     break;
                 
                 case "2": // remove vehicle
-                    //
+                    // remove by id?
                     System.out.println("Vehicle removed!\n");
                     break;
                 
@@ -102,10 +112,21 @@ public class Main {
                         }
 
                         boolean validTime = false;
+                        
+                        // loop until valid input or 'cancel' are entered
                         while (!validTime) {
                             System.out.print("Set a new timer for the " + state + " signal: ");
                             String newTimeStr = scanner.nextLine();
 
+                            // return to main menu if user enters "cancel"
+                            if (newTimeStr.toLowerCase().equals("cancel")) {
+                                System.out.print("Returning to main menu\n");
+                                // section lines for breaking up user interface
+                                System.out.println(sectionLine + "\n");
+                                break menuSelection;
+                            }
+
+                            // input validation for times
                             try {
                                 int newTime = Integer.parseInt(newTimeStr);
                                 newTimer[i] = newTime;
@@ -114,6 +135,11 @@ public class Main {
                                 System.out.println("\n\033[31mInput should be an integer.\033[0m\n");
                             }
                         }
+                    }
+
+                    // set the traffic signals
+                    for (TrafficSignal trafficSignal : trafficSignals) {
+                        trafficSignal.setTimer(newTimer);
                     }
 
                     System.out.println("Timers adjusted!\n");
@@ -132,6 +158,15 @@ public class Main {
                         System.out.print("How many minutes would you like to run the simulation for?: ");
                         String userTime = scanner.nextLine();
     
+                        // return to main menu if user enters "cancel"
+                        if (userTime.toLowerCase().equals("cancel")) {
+                            System.out.print("Returning to main menu\n");
+                            // section lines for breaking up user interface
+                            System.out.println(sectionLine + "\n");    
+                            break menuSelection;
+                        }
+
+                        // input validation for time
                         try {
                             maxTime = Integer.parseInt(userTime);
                             validTime = true;
@@ -140,6 +175,7 @@ public class Main {
                         }
                     }
 
+                    // run a simulation
                     runSimulation(maxTime);
 
                     break;
@@ -166,9 +202,9 @@ public class Main {
     }
 
     public static String showMenu() {
-        // returns a string to be displayed as the menu
+        // returns a formatted string to be displayed as the menu
 
-        return "\033[1mSelect one of the following:033[0m\n\n" +
+        return "\033[1mSelect one of the following:\033[0m\n\n" +
         "\t\033[34m1. Add vehicle\n" + 
         "\t2. Remove vehicle\n" + 
         "\t3. Adjust traffic signal timers\n" + 
@@ -179,20 +215,44 @@ public class Main {
     }
 
     public static void runSimulation(int maxTime) {
-        // input provided in minutes, loop run in seconds
+        
+        // ensure that vehicles have been added
+        if (Vehicle.count < 1) {
+            System.out.println("\033[31mError! You need to add at least 1 vehicle to the simulation.\033[0m\n");
+        } else {
+   
+            // input provided in minutes, loop runs in seconds
 
-        int maxTimeSeconds = maxTime * 60;
+            int maxTimeSeconds = maxTime * 60;
 
-        // one step is considered 5 seconds
-        for (int i = 0; i <= maxTimeSeconds; i += 5) {
-            // do stuff
+            // one step is considered 5 seconds
+            for (int i = 0; i <= maxTimeSeconds; i += 5) {
 
-            if (i % 60 == 0 && i > 0) {
-                System.out.println((i / 60) + " Minutes Completed!");
+                // if (i / 5 == 2) {
+                //     Vehicle.showTrafficState();
+                // }
+
+                // // call the vehicle move method
+                // for (Vehicle vehicle : vehicles) {
+                //     if (vehicle.moveCount < 5) {
+                //         vehicle.move();
+                //     }
+                // }
+
+                // // update the signal timers
+                // for (TrafficSignal trafficSignal : trafficSignals) {
+                //     trafficSignal.signal(i);
+                // }
+
+                if (i % 60 == 0 && i > 0) {
+                    System.out.println((i / 60) + " Minutes Completed!");
+                }
             }
+            
+            // Vehicle.showTrafficState();
 
+            System.out.println("Simulation complete!");
         }
-
     }
 
 }
