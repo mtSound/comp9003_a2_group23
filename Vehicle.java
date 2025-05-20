@@ -1,17 +1,14 @@
+import java.util.ArrayList;
+
 public abstract class Vehicle {
-    public static int count = 0;
+    public static ArrayList<Vehicle> vehicles = new ArrayList<>();
     
     protected String vehicleID;
-
-    private double velocity;
-    private int lane;
-    private int[] currentPosition;
-    
 
     public Vehicle(int vehicleID) {
         // constructor
         this.vehicleID = String.valueOf(vehicleID);
-        count++;
+        vehicles.add(this);
     }
 
 }
@@ -19,8 +16,7 @@ public abstract class Vehicle {
 class Car extends Vehicle {
 
     public Car(int vehicleID){
-        // calculate velocity
-        
+         
         // constructor
         super(vehicleID);
     }
@@ -30,7 +26,6 @@ class Car extends Vehicle {
 class Bus extends Vehicle {
 
     public Bus(int vehicleID){
-        // calculate velocity
         
         // constructor
         super(vehicleID);
@@ -41,7 +36,6 @@ class Bus extends Vehicle {
 class Truck extends Vehicle {
 
     public Truck(int vehicleID){
-        // calculate velocity
         
         // constructor
         super(vehicleID);
