@@ -17,12 +17,12 @@
  * 
  * And the following methods:
  * 
+ *          showTrafficSignal()     Displays the current state of all traffic signals
  *          getID()                 Returns the signalId
  *          getCurrentState()       Returns the currentState
  *          checkCurrentState()     Returns a boolean value based on whether the signal should change
  *          setTimer()              Sets the timer array
  *          signal()                Changes the current signal to the next value in the array
- *          showTrafficSignal()     Displays the current state of all traffic signals
  * 
  */
 
@@ -46,6 +46,7 @@ public class TrafficSignal {
     private int stateIndex = 0;
     private String currentState;
 
+    //////// CONSTRUCTORS
     // default constructor
     public TrafficSignal() {
         // set timers
@@ -105,70 +106,18 @@ public class TrafficSignal {
 
     }
 
-    // Main method for testing
-    public static void main(String[] args) {
-        String sectionLine = new String(new char[111]).replace("\0", "-");
-        int maxTime = 5;
-
-        new TrafficSignal();
-        new TrafficSignal();
-        new TrafficSignal();
-
-        System.out.println(sectionLine + "\n");
-        System.out.println("\033[1;4;33mRunning simulation...\033[0m\n");
-
-        // input provided in minutes, loop runs in seconds
-        int maxTimeSeconds = maxTime * 60;
-
-        // one step is considered 5 seconds
-        for (int i = 0; i <= maxTimeSeconds; i += 5) {
-
-            // // call the vehicle move method
-            // for (Vehicle vehicle : Vehicle.vehicles) {
-            // if (vehicle.moveCount < 5) {
-            // vehicle.move();
-            // }
-            // }
-
-            // // call the intersectionNetwork moveThrough method
-            // for (IntersectionNetwork intersectionNetwork :
-            // IntersectionNetwork.intersectionNetworks) {
-            // intersectionNetwork.moveThrough();
-            // }
-
-            // update the signal
-            for (TrafficSignal signal : TrafficSignal.trafficSignals) {
-                if (signal.checkCurrentState(i)) {
-                    signal.signal();
-                }
-            }
-
-            // show the vehicle traffic state on the second call
-            if (i / 5 == 2) {
-                // Vehicle.showTrafficState();
-            }
-
-            if (i % 60 == 0 && i > 0) {
-                System.out.println((i / 60) + " Minutes Completed!");
-            }
-        }
-
-        // Vehicle.showTrafficState();
-        TrafficSignal.showTrafficSignal();
-        // IntersectionNetwork.showIntersectionStatus();
-
-        System.out.println("\n\033[32mSimulation complete!\n\033[0m");
-        System.out.println(sectionLine + "\n\n");
-    }
-
+    //////// STATIC METHODS
+    /**
+     * Displays the traffic status of all TrafficSignals
+     */
     public static void showTrafficSignal() {
-        // show current traffic status of all vehicles
         System.out.println("\n\033[1;4mSignal states:\033[0m\n");
         for (TrafficSignal signal : trafficSignals) {
             System.out.println(signal);
         }
     }
 
+    //////// GETTERS
     public String getId() {
         // return the signalId
         return this.signalId;
@@ -179,6 +128,27 @@ public class TrafficSignal {
         return currentState;
     }
 
+    //////// SETTERS
+    /**
+     * Sets the timer for a TrafficSignal
+     * @param newTimer - int array of new times
+     */
+    public void setTimer(int newTimer[]) {
+        // change the timers
+        for (int i = 0; i < timer.length; i++) {
+            this.timer[i] = newTimer[i];
+        }
+    }
+
+    //////// METHODS
+    ///
+    /**
+     * Checks the time elapsed in the simulation, and checks whether or not the
+     * signal state needs to be changed
+     * 
+     * @param timeElapsed - time elapsed in the simulation
+     * @return - true if the signal needs to be changes, otherwise, false
+     */
     public boolean checkCurrentState(int timeElapsed) {
         // checks if the signal needs to be changed
         boolean signalChange = false;
@@ -200,16 +170,14 @@ public class TrafficSignal {
         return signalChange;
     }
 
-    public void setTimer(int newTimer[]) {
-        // change the timers
-        for (int i = 0; i < timer.length; i++) {
-            this.timer[i] = newTimer[i];
-        }
-    }
-
+    /**
+     * Cycles through signal states
+     * Throws a simulation exception if an invalid state is encountered
+     */
     public void signal() {
-        
-        // cycle through states, throw a SimulationException if the signal can't be changed
+
+        // cycle through states, throw a SimulationException if the signal can't be
+        // changed
         try {
             currentState = states[stateIndex];
             System.out.println("Traffic signal #" + getId() + " changed to " + getCurrentState());
@@ -217,9 +185,10 @@ public class TrafficSignal {
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new SimulationException("Simulation Exception: ", e);
         }
-        
+
     }
 
+    //////// STRING
     public String toString() {
         return "Traffic Signal #" + getId() + ": " + getCurrentState();
     }
