@@ -1,11 +1,8 @@
-
-// import java.util.ArrayList;
 import java.util.Scanner;
 
 import trafficSignal.TrafficSignal;
-import simulationException.SimulationException;
 
-public class Main {
+public class UrbanTrafficSimulation {
     public static Scanner scanner = new Scanner(System.in);
     public static String titleLine = new String(new char[80]).replace("\0", "=");
     public static String sectionLine = new String(new char[80]).replace("\0", "-");
@@ -33,7 +30,6 @@ public class Main {
 
         loadObjects(num);
 
-
         ///////////// MENU LOOP
         boolean programComplete = false;
         while (!programComplete) {
@@ -55,45 +51,53 @@ public class Main {
 
                     boolean validVehicle = false;
 
-                    System.out.print("What kind of vehicle would you like to add? ('Car', 'Bus' or 'Truck'): ");
-                    // int vehicleID = Vehicle.vehicles.size() + 1;
-
                     // loop until valid input or 'cancel' are entered
                     while (!validVehicle) {
+                        System.out.print("What kind of vehicle would you like to add? ('Car', 'Bus' or 'Truck'): ");
+                        // int vehicleID = Vehicle.vehicles.size() + 1;
+
                         // prompt for user input (type of vehicle)
                         String vehicleType = scanner.nextLine().toLowerCase();
 
-                        switch (vehicleType) {
+                        try {
+                            validVehicle(vehicleType);
 
-                            // add a car
-                            case "car":
-                                // new Car();
-                                validVehicle = true;
-                                break;
+                            switch (vehicleType) {
 
-                            // add a bus
-                            case "bus":
-                                // new Bus();
-                                validVehicle = true;
-                                break;
+                                // add a car
+                                case "car":
+                                    // new Car();
+                                    validVehicle = true;
+                                    break;
 
-                            // add a truck
-                            case "truck":
-                                // new Truck();
-                                validVehicle = true;
-                                break;
+                                // add a bus
+                                case "bus":
+                                    // new Bus();
+                                    validVehicle = true;
+                                    break;
 
-                            // return to main menu if user enters "cancel"
-                            case "cancel":
-                                returnToMain();
-                                break menuSelection;
+                                // add a truck
+                                case "truck":
+                                    // new Truck();
+                                    validVehicle = true;
+                                    break;
 
-                            default:
-                                System.out.println(
-                                        "\033[31mInvalid input. Please enter 'car', 'bus', 'truck', or 'cancel'\033[0m\n");
+                                // return to main menu if user enters "cancel"
+                                case "cancel":
+                                    returnToMain();
+                                    break menuSelection;
+
+                                // should never happen
+                                default:
+                                    System.out.println(
+                                            "\033[31mInvalid input. Please enter 'car', 'bus', 'truck', or 'cancel'\033[0m\n");
+                            }
+                            returnToMain();
+                        } catch (SimulationException e) {
+                            System.out.println("\n" + e +
+                                    "\033[31mInvalid input. Please enter 'car', 'bus', 'truck', or 'cancel'\033[0m\n");
                         }
 
-                        returnToMain();
                     }
 
                     break;
@@ -103,11 +107,10 @@ public class Main {
                     System.out.println(
                             "\n-------------------------------- \033[1mRemove Vehicle\033[0m --------------------------------\n");
 
-                    System.out.println("Displaying Vehicles...");
-
                     // if (Vehicle.vehicles.size() == 0) {
                     //     System.out.println("No vehicles found!");
                     // } else {
+                    //     System.out.println("Displaying " + Vehicle.vehicles.size() + " Vehicles...");
                     //     // display vehicles
                     //     for (Vehicle vehicle : Vehicle.vehicles) {
                     //         System.out.println(vehicle);
@@ -120,20 +123,22 @@ public class Main {
                     //         System.out.print("Enter the ID of the vehicle to remove or 'cancel': ");
                     //         String removeID = scanner.nextLine();
 
-                    //         if (validateInput(removeID) > 0) {
-                    //             for (int i = 0; i < Vehicle.vehicles.size(); i++) {
-                    //                 if (removeID.equals(Vehicle.vehicles.get(i).getID())) {
-                    //                     Vehicle.vehicles.remove(i);
-                    //                     System.out.println("Vehicle " + i + " removed!\n");
-                    //                     validInput = true;
-                    //                     break;
+                    //         try {
+                    //             if (validateInput(removeID) > 0) {
+                    //                 for (int i = 0; i < Vehicle.vehicles.size(); i++) {
+                    //                     if (removeID.equals(Vehicle.vehicles.get(i).getID())) {
+                    //                         Vehicle.vehicles.remove(i);
+                    //                         System.out.println("Vehicle " + i + " removed!\n");
+                    //                         validInput = true;
+                    //                         break;
+                    //                     }
                     //                 }
-                    //             }
-                    //         } else {
-                    //             if (validateInput(removeID) == 0) {
+                    //             } else {
                     //                 returnToMain();
                     //                 break menuSelection;
                     //             }
+                    //         } catch (SimulationException e) {
+                    //             System.out.println(e + "\033[31mInvalid Vehicle ID.\033[0m\n");
                     //         }
 
                     //         if (!validInput) {
@@ -167,18 +172,20 @@ public class Main {
                         signalSelection = scanner.nextLine();
                         System.out.println();
 
-                        if (validateInput(signalSelection) > 0) {
-                            selection = Integer.parseInt(signalSelection);
-                            validInput = true;
-                        } else {
-                            if (validateInput(signalSelection) == 0) {
+                        try {
+                            if (validateInput(signalSelection) > 0) {
+                                selection = Integer.parseInt(signalSelection);
+                                validInput = true;
+                            } else {
                                 returnToMain();
                                 break menuSelection;
-                            } else {
-                                System.out.println(
-                                        "\033[31mInvalid input. Please enter a numbered selection or 'cancel'\033[0m\n");
                             }
+                        } catch (SimulationException e) {
+                            System.out.println(e +
+                                    "\033[31mInvalid input. Please enter a numbered selection or 'cancel'\033[0m\n");
+
                         }
+
                     }
 
                     // set timer values
@@ -201,16 +208,17 @@ public class Main {
                             System.out.print("Set a new timer for the " + state + " signal: ");
                             String newTime = scanner.nextLine();
 
-                            if (validateInput(newTime) > 0) {
-                                newTimer[i] = Integer.parseInt(newTime);
-                                validInput = true;
-                            } else {
-                                if (validateInput(newTime) == 0) {
+                            try {
+                                if (validateInput(newTime) > 0) {
+                                    newTimer[i] = Integer.parseInt(newTime);
+                                    validInput = true;
+                                } else {
                                     returnToMain();
                                     break menuSelection;
-                                } else {
-                                    System.out.println("\n\033[31mInput should be an integer.\033[0m\n");
                                 }
+                            } catch (SimulationException e) {
+                                System.out.println(
+                                        "\n" + e + "\033[31mInput should be an integer greater than zero.\033[0m\n");
                             }
                         }
                     }
@@ -228,14 +236,14 @@ public class Main {
                                 signal.setTimer(newTimer);
                             }
                         }
-                        System.out.println("Timers adjusted for Traffic Signal " + selection + "\n");
+                        System.out.println("\nTimers adjusted for Traffic Signal " + selection + "\n");
                     }
 
                     returnToMain();
                     break;
 
                 // MENU 4: View Traffic Status
-                case "4": 
+                case "4":
                     System.out.println(
                             "\n----------------------------- \033[1mShow Traffic Status\033[0m ------------------------------\n");
 
@@ -256,7 +264,7 @@ public class Main {
                     } else {
                         System.out.println("No Intersection Networks to display.");
                     }
-                    
+
                     returnToMain();
                     break;
 
@@ -273,22 +281,17 @@ public class Main {
                         System.out.print("How many minutes would you like to run the simulation for: ");
                         String userTime = scanner.nextLine();
 
-                        // return to main menu if user enters "cancel"
-                        if (userTime.toLowerCase().equals("cancel")) {
-                            returnToMain();
-                            break menuSelection;
-                        }
-
-                        if (validateInput(userTime) > 0) {
-                            maxTime = Integer.parseInt(userTime);
-                            validInput = true;
-                        } else {
-                            if (validateInput(userTime) == 0) {
+                        try {
+                            if (validateInput(userTime) > 0) {
+                                maxTime = Integer.parseInt(userTime);
+                                validInput = true;
+                            } else {
                                 returnToMain();
                                 break menuSelection;
-                            } else {
-                                System.out.println("\n\033[31mMinutes should be an integer.\033[0m\n");
                             }
+                        } catch (SimulationException e) {
+                            System.out.println(
+                                    "\n" + e + "\033[31mMinutes should be an integer greater than zero.\033[0m\n");
                         }
                     }
 
@@ -320,7 +323,6 @@ public class Main {
 
     }
 
-
     /**
      * Displays the Menu
      */
@@ -346,6 +348,7 @@ public class Main {
 
     /**
      * Instaniates Vehicles, Traffic Signals, and IntersectionNetworks
+     * 
      * @param num - the number of each to load
      */
     public static void loadObjects(int num) {
@@ -361,7 +364,7 @@ public class Main {
                         // new Car();
                         break;
                     case 2:
-                        //new Bus();
+                        // new Bus();
                     case 3:
                         // new Truck();
                     default:
@@ -378,6 +381,7 @@ public class Main {
 
     /**
      * Validates an input String
+     * 
      * @param input - the input String to validate
      * @return - 1 if valid input, -1 if invalid, and 0 if 'cancel'
      */
@@ -389,18 +393,44 @@ public class Main {
             try {
                 int num = Integer.parseInt(input);
                 if (num < 1) {
-                    return -1;
+                    throw new SimulationException("");
                 } else {
                     return 1;
                 }
             } catch (NumberFormatException e) {
-                return -1;
+                throw new SimulationException("");
             }
         }
     }
 
     /**
+     * Validates a vehicle input string
+     * 
+     * @param input - input to validate
+     * @return - boolean, whether or not the input is correct
+     */
+    public static boolean validVehicle(String input) {
+        String[] validVehicles = new String[] { "car", "bus", "trucks" };
+
+        boolean validVehicle = false;
+
+        for (int i = 0; i < validVehicles.length; i++) {
+            if (input.toLowerCase().equals(validVehicles[i])) {
+                validVehicle = true;
+            }
+        }
+
+        if (!validVehicle) {
+            throw new SimulationException("");
+        }
+
+        return validVehicle;
+
+    }
+
+    /**
      * Runs the simulation
+     * 
      * @param maxTime - the time in minutes to run the simulation for
      */
     public static void runSimulation(int maxTime) {
@@ -438,7 +468,7 @@ public class Main {
                         try {
                             signal.signal();
                         } catch (SimulationException e) {
-                            System.out.println("Error! The signal cannot be changed");
+                            System.out.println(e + "Error! The signal cannot be changed");
                         }
                     }
                 }
@@ -474,6 +504,18 @@ public class Main {
 
             System.out.println("Simulation complete!");
         }
+    }
+
+}
+
+class SimulationException extends RuntimeException {
+
+    public SimulationException(String errorMessage) {
+        super(errorMessage);
+    }
+
+    public SimulationException(String errorMessage, Throwable error) {
+        super(errorMessage, error);
     }
 
 }

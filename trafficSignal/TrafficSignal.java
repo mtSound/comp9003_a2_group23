@@ -37,14 +37,14 @@ public class TrafficSignal {
     public static ArrayList<TrafficSignal> trafficSignals = new ArrayList<>();
 
     // allowed states
-    protected static final String[] states = new String[] { "red", "yellow", "green" };
+    private static final String[] states = new String[] { "red", "yellow", "green" };
 
     // instance attributes
     private String signalId;
     private int[] timer = new int[3];
+    private String currentState;
     private int timeChanged = 0;
     private int stateIndex = 0;
-    private String currentState;
 
     //////// CONSTRUCTORS
     // default constructor
@@ -115,6 +115,7 @@ public class TrafficSignal {
         for (TrafficSignal signal : trafficSignals) {
             System.out.println(signal);
         }
+        System.out.println();
     }
 
     //////// GETTERS
